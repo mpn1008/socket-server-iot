@@ -14,9 +14,25 @@ users = [321,232,121,23321,2121];
 connections = []
 io.on('connection', function(socket){
     console.log("Spotted connection")
+    socket.on("sensordata",function(data){
+        console.log("Communicating through event named \"sensordata\"");
+        console.log(data);
+        socket.emit("receiver",data)
+        /* const client = new mongo(uri, { useNewUrlParser: true });
+        client.connect(err => {
+        const collection = client.db("unipj").collection("accels");
+        console.log('mongoDB connected'); 
+        var obj = data
+        collection.insertOne(obj, function(err, res) {
+            if (err) throw err;
+          });
+        client.close();
+        })*/
+      
+    });
     socket.emit('important message', users)
     socket.on('response',function(msg){
-        const client = new mongo(uri, { useNewUrlParser: true });
+        /*const client = new mongo(uri, { useNewUrlParser: true });
         client.connect(err => {
         const collection = client.db("unipj").collection("accels");
         console.log('mongoDB connected'); 
@@ -25,10 +41,11 @@ io.on('connection', function(socket){
             if (err) throw err;
           });
         client.close();
-        });
+        });*/
         console.log(msg);
     })
   });
+
 server.listen(port);
 
 
