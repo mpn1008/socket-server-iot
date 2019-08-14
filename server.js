@@ -10,65 +10,37 @@ app.use(bodyParse.json());
 var server = require("http").createServer(app);
 var io = require("socket.io")(server);
 var port = process.env.PORT || 3000;
-users = [321,232,121,23321,2121];
 connections = []
 io.on('connection', function(socket){
     console.log("Spotted connection")
+    socket.on('response',function(msg){
+      //  console.log(msg);
+    })
+    socket.on('error',function(er){
+      console.log(er);
+    });
     socket.on("sensordata",function(data){
-        console.log("Communicating through event named \"sensordata\"");
+        console.log("Communicating through event named \"sensordata\"")
         console.log(data);
-        socket.emit("receiver",data)
-        /* const client = new mongo(uri, { useNewUrlParser: true });
+        // Save data to database 
+       /*const client = new mongo(uri, { useNewUrlParser: true });
         client.connect(err => {
-        const collection = client.db("unipj").collection("accels");
-        console.log('mongoDB connected'); 
-        var obj = data
-        collection.insertOne(obj, function(err, res) {
+        console.log("Saved to the mongoDB");
+        const collection = client.db("unipj").collection("sensordata"); 
+        collection.insertOne(data, function(err, res) {
             if (err) throw err;
           });
         client.close();
         })*/
-      
+        io.emit('datareceive', data)
     });
-    socket.emit('important message', users)
-    socket.on('response',function(msg){
-        /*const client = new mongo(uri, { useNewUrlParser: true });
-        client.connect(err => {
-        const collection = client.db("unipj").collection("accels");
-        console.log('mongoDB connected'); 
-        var obj = JSON.parse("{\"axisx\":"+String(msg)+"}")
-        collection.insertOne(obj, function(err, res) {
-            if (err) throw err;
-          });
-        client.close();
-        });*/
-        console.log(msg);
-    })
-  });
+    
+});
 
 server.listen(port);
 
 
-/*var WebSocketServer = require("ws").Server,
-  wss = new WebSocketServer({port: 3000})
-
-  wss.on('connection', function (ws) {
-    console.log("Connected")
-    ws.on('open', function open() {
-        ws.send('something');
-    });
-      
-    ws.on('message', function incoming(data) {
-        console.log(data);
-    });
-    const array = new Float32Array(5);
- 
-    for (var i = 0; i < array.length; ++i) {
-    array[i] = i / 2;
-    }
-    ws.send(array)
-  
-})
+/*
 
   /*setInterval(
     () => ws.send(`${new Date()}`),
